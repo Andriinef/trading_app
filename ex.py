@@ -26,9 +26,9 @@ async def get_currency(sum: float = 100.00, from_in: str = "USD", to: str = "EUR
 
     if from_dict and to_dict:
         if "rate" not in from_dict or not isinstance(from_dict["rate"], (int, float)):
-            return {"status": 404, "result": "Invalid exchange rate in from_dict"}
+            return {"status": 503, "result": "Invalid exchange rate in from_dict"}
         if "rate" not in to_dict or not isinstance(to_dict["rate"], (int, float)):
-            return {"status": 404, "result": "Invalid exchange rate in to_dict"}
+            return {"status": 503, "result": "Invalid exchange rate in to_dict"}
 
         conversion_factor = from_dict["rate"] / to_dict["rate"]
         sum *= conversion_factor
