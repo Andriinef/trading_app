@@ -24,3 +24,6 @@ data/
 
 # Log files
 *log
+
+# Mypy
+.mypy_cache
