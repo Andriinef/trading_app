@@ -6,6 +6,9 @@ name = "pypi"
 [packages]
 fastapi = {extras = ["all"], version = "==0.92.0"}
 requests = "*"
+sqlalchemy = "*"
+alembic = "*"
+psycopg2-binary = "*"
 
 [dev-packages]
 black = "~=22.10.0"

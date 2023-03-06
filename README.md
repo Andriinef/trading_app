@@ -18,7 +18,23 @@ uvicorn main:app --reload
 pipenv install python-multipart
 ```
 
+## Sqlalchemy
+
+```code
+pipenv install sqlalchemy
+```
+
+## Alembic
+
+```code
+pipenv install alembic
+```
+
 ## Postgresql
+
+```code
+pipenv install psycopg2-binary
+```
 
 ``` code
 pipenv install ormar[postgresql]

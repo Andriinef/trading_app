@@ -1,23 +1,62 @@
-from currency_data import update_currency_data_file
-from fastapi import FastAPI
+from datetime import datetime
+from enum import Enum
+from typing import Optional
 
-app = FastAPI(title="Trading App")
+from currency_data import update_currency_data_file
+from fastapi import FastAPI, Request, status
+from fastapi.encoders import jsonable_encoder
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel, Field
+
+app = FastAPI()
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    return JSONResponse(
+        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        content=jsonable_encoder({"detail": exc.errors(), "body": exc.body}),
+    )
 
 
 fake_user = [
     {"id": 1, "role": "admin", "name": "admin"},
     {"id": 2, "role": "manager", "name": "Bob"},
-    {"id": 3, "role": "user", "name": "Meri"},
+    {
+        "id": 3,
+        "role": "user",
+        "name": "Meri",
+        "degree": [{"id": 1, "create_at": "2022-01-01T00:00:00", "type_degree": "expert"}],
+    },
 ]
 
 
-@app.get("/user/{user_id}")
+class DegreeType(Enum):
+    newbie = "newbie"
+    expert = "expert"
+
+
+class Degree(BaseModel):
+    id: int
+    create_at: datetime
+    type_degree: DegreeType
+
+
+class User(BaseModel):
+    id: int
+    role: str
+    name: str
+    degree: Optional[list[Degree]] = []
+
+
+@app.get("/user/{user_id}", response_model=list[User])
 def get_user(user_id: int):
     for user in fake_user:
         if user.get("id") == user_id:
-            return user.get("name")
-
-    return {"status": 404, "data": f"User with id {user_id} not found"}
+            user_list = []
+            user_list.append(user)
+            return user_list
 
 
 @app.post("/user_/{user_id}", deprecated=True)
@@ -27,7 +66,7 @@ def update_user_name_(user_id: int, new_name: str):
     return {"status": 200, "data": update_user}
 
 
-@app.post("/user/{user_id}")
+@app.post("/user/{user_id}", response_model=list[User])
 async def update_user_name(user_id: int, new_name: str):
     for user in fake_user:
         if user.get("id") == user_id:
@@ -56,7 +95,7 @@ async def get_currency_data(limit: int = 1, offset: int = 24):
     return new_currency_data
 
 
-@app.get("/currency_data/")
+@app.get("/currency_price")
 async def get_price(from_in: str = "USD", to: str = "EUR"):
     from_in = from_in.upper()
     to = to.upper()
@@ -80,7 +119,7 @@ async def get_price(from_in: str = "USD", to: str = "EUR"):
 """Currency calculator"""
 
 
-@app.post("/currency_data/")
+@app.post("/currency_data")
 async def get_currency(sum: float = 100.00, from_in: str = "USD", to: str = "EUR") -> dict:
     from_in = from_in.upper()
     to = to.upper()
@@ -111,3 +150,26 @@ async def get_currency(sum: float = 100.00, from_in: str = "USD", to: str = "EUR
         return {"status": 404, "result": f"{from_in} currency does not exist"}
 
     return {"result": f"{round(sum, 2)} {to}", "from": from_dict, "to": to_dict}
+
+
+fake_trades = [
+    {"id": 1, "user_id": 1, "currency": "USD", "side": "sell", "price": 100.00, "amount": 5.0},
+    {"id": 2, "user_id": 2, "currency": "USD", "side": "sell", "price": 102.00, "amount": 6.0},
+    {"id": 3, "user_id": 3, "currency": "USD", "side": "sell", "price": 105.00, "amount": 15.0},
+    {"id": 4, "user_id": 4, "currency": "USD", "side": "sell", "price": 109.99, "amount": 2.5},
+]
+
+
+class Trade(BaseModel):
+    id: int
+    user_id: int
+    currency: str = Field(max_length=5)
+    site: str
+    price: float = Field(ge=0)
+    amount: float
+
+
+# @app.post("/tredis")
+# def add_tredis(tredis: list[Trade]):
+#     fake_trades.extend(tredis)
+#     return {"status": 200, "data": fake_trades}

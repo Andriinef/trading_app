@@ -6,7 +6,7 @@ app = FastAPI(title="Trading App")
 """Currency calculator"""
 
 
-@app.post("/currency_data/")
+@app.post("/currency_data")
 async def get_currency(sum: float = 100.00, from_in: str = "USD", to: str = "EUR") -> dict:
     from_in = from_in.upper()
     to = to.upper()
