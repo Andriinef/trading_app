@@ -2,12 +2,13 @@ from datetime import datetime
 from enum import Enum
 from typing import Optional
 
-from currency_data import update_currency_data_file
 from fastapi import FastAPI, Request, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
+
+from .currency_data import update_currency_data_file
 
 app = FastAPI()
 
