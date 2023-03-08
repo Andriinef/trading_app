@@ -3,7 +3,10 @@ version: '3'
 services:
   postgres:
     image: postgres
+    container_name: "trading_postgres"
     restart: always
+    ports:
+      - "5432:5432"
     env_file:
     - ".env"
     volumes:
@@ -13,13 +16,17 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    image: "trading_app"
+    container_name: "trading_app"
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
     ports:
       - "8000:8000"
     depends_on:
       - postgres
     env_file:
     - ".env"
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+    volumes:
+      - ".:/app/"
 
 volumes:
   postgres_data:

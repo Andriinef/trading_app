@@ -9,6 +9,9 @@ requests = "*"
 sqlalchemy = "*"
 alembic = "*"
 psycopg2-binary = "*"
+databases = "*"
+asyncpg = "*"
+aiosqlite = "*"
 
 [dev-packages]
 black = "~=22.10.0"

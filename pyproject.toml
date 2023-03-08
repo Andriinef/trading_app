@@ -34,7 +34,7 @@ src_paths = ["src"]
 python_version = '3.10'
 plugins = []
 mypy_path = 'src'
-exclude = ["migrations/env"]
+exclude = ["database"]
 follow_imports = 'silent'
 warn_redundant_casts = true
 warn_unused_ignores = true
@@ -42,5 +42,11 @@ show_error_codes = true
 namespace_packages = true
 
 [[tool.mypy.overrides]]
-module = ["requests", ".currency_data"]
+module = [
+    "requests",
+    "sqlalchemy/*",
+    ".currency.router",
+    ".fake_user_trades.router",
+    ".notes.router"
+    ]
 ignore_missing_imports = true
