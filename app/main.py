@@ -6,15 +6,14 @@ from fastapi.responses import JSONResponse
 from .currency.router import currency_router
 from .fake_user_trades.router import trades_router
 from .notes.router import notes_router
-
-# from users.router import users_router
+from .users.router import auth_router
 
 app = FastAPI()
 
 
 app.include_router(trades_router)
 app.include_router(currency_router)
-# app.include_router(users_router)
+app.include_router(auth_router)
 app.include_router(notes_router)
 
 

@@ -1,6 +1,7 @@
-from app.database.database import metadata
 from pydantic import BaseModel
 from sqlalchemy import Boolean, Column, Integer, String, Table
+
+from .database import metadata
 
 notes = Table(
     "notes",

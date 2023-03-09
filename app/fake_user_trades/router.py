@@ -64,21 +64,24 @@ def get_user(user_id: int):
             return user_list
 
 
+@trades_router.post("/user_lambda/{user_id}")
+def update_user_name_lambda(user_id: int, new_name: str):
+    update_user = list(filter(lambda user: user["id"] == user_id, fake_user))
+    if not update_user:
+        return {"status": 404, "data": f"User with id {user_id} not found"}
+
+    update_user[0]["name"] = new_name
+    return {"status": 200, "data": update_user[0]}
+
+
 @trades_router.post("/user/{user_id}")
-def update_user_name_(user_id: int, new_name: str):
-    update_user = list(filter(lambda user: user.get("id") == user_id, fake_user))[0]
+def update_user_name(user_id: int, new_name: str):
+    update_user = next((user for user in fake_user if user["id"] == user_id), None)
+    if update_user is None:
+        return {"status": 404, "data": f"User with id {user_id} not found"}
+
     update_user["name"] = new_name
     return {"status": 200, "data": update_user}
-
-
-# @trades_router.post("/user_/{user_id}", response_model=list[User])
-# async def update_user_name(user_id: int, new_name: str):
-#     for user in fake_user:
-#         if user.get("id") == user_id:
-#             update_user = user
-#             update_user["name"] = new_name
-#             return {"status": 200, "data": update_user}
-#     return {"status": 404, "data": f"User with id {user_id} not found"}
 
 
 # @trades_router.post("/tredis")

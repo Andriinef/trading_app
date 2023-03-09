@@ -1,8 +1,8 @@
 from typing import List
 
-from app.database.database import database
 from fastapi import APIRouter
 
+from .database import database
 from .models import Note, NoteIn, notes
 
 notes_router = APIRouter(prefix="/notes", tags=["notes"])

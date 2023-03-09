@@ -1,81 +1,40 @@
-# from fastapi import APIRouter, Depends
-# from sqlalchemy.orm import Session
+from fastapi import APIRouter, Depends
 
-# from .models import Role, RoleCreate, SessionLocal, User, UserCreate, database
+from .db import User, create_db_and_tables
+from .schemas import UserCreate, UserRead
+from .users import auth_backend, current_active_user, fastapi_users
 
-# users_router = APIRouter(prefix="/users", tags=["users"])
+auth_router = APIRouter(prefix="/auth", tags=["auth"])
 
-
-# # Зависимость для создания объекта сессии базы данных SQLAlchemy
-
-
-# def get_database():
-#     db = SessionLocal()
-#     try:
-#         yield db
-#     finally:
-#         db.close()
-
-
-# @users_router.on_event("startup")
-# async def startup():
-#     await database.connect()
-
-
-# @users_router.on_event("shutdown")
-# async def shutdown():
-#     await database.disconnect()
-
-
-# # Обработчик маршрута для создания новой роли
-
-
-# @users_router.post("/roles/")
-# def create_role(role: RoleCreate, db: Session = Depends(get_database)):
-#     db_role = Role(name=role.name, description=role.description)
-#     db.add(db_role)
-#     db.commit()
-#     db.refresh(db_role)
-#     return db_role
+auth_router.include_router(fastapi_users.get_auth_router(auth_backend), prefix="/auth/jwt", tags=["auth"])
+auth_router.include_router(
+    fastapi_users.get_register_router(UserRead, UserCreate),
+    prefix="/auth",
+    tags=["auth"],
+)
+auth_router.include_router(
+    fastapi_users.get_reset_password_router(),
+    prefix="/auth",
+    tags=["auth"],
+)
+auth_router.include_router(
+    fastapi_users.get_verify_router(UserRead),
+    prefix="/auth",
+    tags=["auth"],
+)
+# auth_router.include_router(
+#     fastapi_users.get_users_router(UserRead, UserUpdate),
+#     prefix="/users",
+#     tags=["users"],
+# )
 
 
-# # Обработчик маршрута для создания нового пользователя
+@auth_router.get("/authenticated-route")
+async def authenticated_route(user: User = Depends(current_active_user)):
+    return {"message": f"Hello {user.email}!"}
 
 
-# @users_router.post("/users/")
-# def create_user(user: UserCreate, db: Session = Depends(get_database)):
-#     db_user = User(
-#         email=user.email,
-#         hashed_password=user.hashed_password,
-#         is_active=user.is_active,
-#         role_id=user.role_id,
-#     )
-#     db.add(db_user)
-#     db.commit()
-#     db.refresh(db_user)
-#     return db_user
-
-
-# # Обработчик маршрута для добавления первой записи в таблицу ролей и пользователей
-
-
-# @users_router.post("/init")
-# async def init_database(db: Session = Depends(get_database)):
-#     # Создаем роль "admin"
-#     admin_role = Role(name="admin", description="Administrator")
-#     db.add(admin_role)
-#     db.commit()
-#     db.refresh(admin_role)
-
-#     # Создаем пользователя с ролью "admin"
-#     admin_user = User(
-#         email="admin@example.com",
-#         hashed_password="password",
-#         is_active=True,
-#         role_id=admin_role.id,
-#     )
-#     db.add(admin_user)
-#     db.commit()
-#     db.refresh(admin_user)
-
-#     return {"message": "Database initialized successfully."}
+@auth_router.on_event("startup")
+async def on_startup():
+    # Not needed if you setup a migration system like Alembic
+    await create_db_and_tables()

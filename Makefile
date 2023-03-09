@@ -9,10 +9,10 @@ alemmig:
 	alembic init migration
 
 alemrev:
-	alembic revision --autogenerate -m
+	alembic revision --autogenerate -m "Initial"
 
 alemupd:
-	alembic upgrade
+	alembic upgrade head
 
 build:
 	docker build .
