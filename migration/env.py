@@ -1,6 +1,7 @@
 from apps.db.db import DATABASE_URL, Base
 from logging.config import fileConfig
 from apps.tickets.models import Ticket
+from apps.person.models import Person
 
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool

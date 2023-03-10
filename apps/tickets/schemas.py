@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 
 class TicketCreateSchema(BaseModel):
@@ -11,12 +11,13 @@ class TicketCreateSchema(BaseModel):
 class TicketSchema(TicketCreateSchema):
     id: int
 
+
+class TicketResponseSchema(BaseModel):
+    id: int
+    customer_id: int
+    manager_id: int
+    header: str
+    body: str
+
     class Config:
         orm_mode = True
-
-
-class TicketsResponseSchema(BaseModel):
-    results: list[TicketSchema] = Field(
-        description="Includes the list of Ticket response schema",
-        default_factory=list,
-    )
