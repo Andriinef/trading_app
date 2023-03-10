@@ -8,11 +8,11 @@ reload:
 aleminit:
 	alembic init ./migration/
 
-alemrev:
-	alembic revision --autogenerate -m "Initial"
-
 alemupd:
 	alembic upgrade head
+
+alemrev:
+	alembic revision --autogenerate -m "Initial"
 
 build:
 	docker build .

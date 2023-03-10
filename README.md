@@ -1,62 +1,11 @@
 # FastApi
 
-## Пример создания модели user в fastapi
-
-Конкретная модель для пользователя может выглядеть по-разному в зависимости от того, какие данные вы хотите хранить. Однако, общая структура модели может выглядеть так:
-
-```python
-from pydantic import BaseModel
-
-class User(BaseModel):
-    id: int
-    username: str
-    email: str
-    password: str
-    full_name: Optional[str] = None
-    disabled: Optional[bool] = False
-```
-
-Здесь мы определяем модель пользователя с помощью базовой модели Pydantic, которая позволяет нам определять поля и их типы. В этой модели мы определяем следующие поля:
-
-* id - идентификатор пользователя, который будет являться уникальным идентификатором пользователя в базе данных;
-* username - имя пользователя, которое он будет использовать для входа в систему;
-* email - адрес электронной почты пользователя, который будет использоваться для отправки уведомлений и других сообщений;
-* password - пароль пользователя, который будет храниться в хэшированном виде в базе данных;
-* full_name - полное имя пользователя, которое может быть опциональным;
-* disabled - флаг, который указывает, отключен ли пользователь в настоящее время.
-
-Как только вы определили модель пользователя, вы можете использовать ее для создания маршрутов API с помощью FastAPI. Например, вы можете создать маршрут, который позволяет пользователю зарегистрироваться в системе, используя следующий код:
-
-```python
-from fastapi import FastAPI
-from .models import User
-
-app = FastAPI()
-
-@app.post("/users/")
-async def create_user(user: User):
-    # Создание пользователя в базе данных
-    # Возврат данных пользователя
-    return user
-```
-
-Здесь мы определяем маршрут POST /users/, который принимает модель пользователя в качестве входных данных и создает нового пользователя в базе данных. Затем мы возвращаем данные пользователя в качестве ответа на запрос.
-
-Это простой пример использования модели пользователя в FastAPI, который может быть адаптирован для вашей конкретной системы.
-
 ## пример  создания модели users с помощью sqlalchemy
 
 Конкретная модель для пользователей с помощью SQLAlchemy может выглядеть так:
 
 ```python
-from pydantic import BaseModel
 from sqlalchemy import Column, Integer, String, Boolean
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
-from typing import Optional
-
-
-Base = declarative_base()
 
 
 class Role(Base):
@@ -78,20 +27,6 @@ class User(Base):
     disabled = Column(Boolean, default=False)
     role_id = Column(Integer, ForeignKey("roles.id"), nullable=True)
     role = relationship("Role", backref="users")
-
-
-class RoleCreate(BaseModel):
-    name: str
-    description: Optional[str] = None
-
-
-class UserCreate(BaseModel):
-    username: str
-    email: str
-    password: str
-    full_name: str = None
-    disabled: bool = False
-    role_id: int = None
 ```
 
 Здесь мы определяем модель пользователя с помощью SQLAlchemy. В этой модели мы определяем следующие поля:
@@ -110,24 +45,69 @@ class UserCreate(BaseModel):
 Вот пример модуля database.py, который определяет объект engine для соединения с базой данных и для создания объектов сессии базы данных SQLAlchemy:
 
 ```python
-from databases import Database
-from sqlalchemy import MetaData, create_engine
 from os import getenv
 
-# SQLAlchemy specific code, as with any other app
-# DATABASE_URL = "sqlite:///./test.db"
-SQLALCHEMY_DATABASE_URL = getenv("DATABASE_URL")
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy.orm import DeclarativeMeta, declarative_base, sessionmaker
 
-database = Database(
+DATABASE_URL = "sqlite+aiosqlite:///./test.db"
+SQLALCHEMY_DATABASE_URL = getenv("DATABASE_URL")
+Base: DeclarativeMeta = declarative_base()
+
+engine = create_async_engine(
     # DATABASE_URL
     SQLALCHEMY_DATABASE_URL
-    )
-
-metadata = MetaData()
-
-engine = create_engine(
-    # DATABASE_URL, connect_args={"check_same_thread": False}
-    SQLALCHEMY_DATABASE_URL
 )
-metadata.create_all(engine)
+async_session_maker = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 ```
+
+## Alembic для миграции базы данных
+
+Чтобы использовать Alembic для миграции базы данных в FastAPI, нужно выполнить несколько шагов:
+
+1. Установите alembic и SQLAlchemy:
+
+    ```code
+    pipenv install alembic sqlalchemy
+    ```
+
+2. Инициализируйте Alembic:
+
+    ```code
+    alembic init ./migration/
+    ```
+
+3. Сделайте в корневом каталоге вашего проекта файл alembic.ini следующие изменения:
+
+    ```code
+    [alembic]
+    script_location = alembic
+    sqlalchemy.url = driver://user:pass@localhost/dbname
+    ```
+
+    необходимо заменить driver://user:pass@localhost/dbname на URL вашей базы данных, например postgresql://user:password@localhost:port/mydatabase.
+
+4. Создайте модель базы данных с помощью SQLAlchemy в вашем приложении FastAPI.
+
+5. В файле migration/env.py сделайте изменение в строке target_metadata = None:
+
+    ```python
+    from db.db import DATABASE_URL, Base
+
+    target_metadata = Base.metadata
+    config.set_main_option("sqlalchemy.url", DATABASE_URL)
+    ```
+
+6. Сгенерируйте начальную миграцию Alembic:
+
+    ```code
+    alembic revision --autogenerate -m "Initial migration"
+    ```
+
+7. Примените миграцию к базе данных:
+
+    ```code
+    alembic upgrade head
+    ```
+
+8. Добавьте миграцию в систему контроля версий и повторите шаги 5-7 при каждом изменении модели базы данных.
