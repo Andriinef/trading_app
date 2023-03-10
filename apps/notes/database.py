@@ -3,6 +3,7 @@ from os import getenv
 from databases import Database
 from sqlalchemy import MetaData
 from sqlalchemy.ext.asyncio import async_session, create_async_engine
+from sqlalchemy.orm import DeclarativeMeta, declarative_base
 
 # SQLAlchemy specific code, as with any other app
 # DATABASE_URL = "sqlite:///./test.db"
@@ -12,7 +13,7 @@ database = Database(
     # DATABASE_URL
     SQLALCHEMY_DATABASE_URL
 )
-
+Base: DeclarativeMeta = declarative_base()
 metadata = MetaData()
 
 engine = create_async_engine(

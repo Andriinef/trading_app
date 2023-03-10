@@ -1,25 +1,13 @@
-from os import getenv
 from typing import AsyncGenerator
 
+from apps.db.db import Base, async_session_maker, engine
 from fastapi import Depends
 from fastapi_users.db import SQLAlchemyBaseUserTableUUID, SQLAlchemyUserDatabase
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from sqlalchemy.orm import DeclarativeMeta, declarative_base, sessionmaker
-
-DATABASE_URL = "sqlite+aiosqlite:///./test.db"
-SQLALCHEMY_DATABASE_URL = getenv("DATABASE_URL")
-Base: DeclarativeMeta = declarative_base()
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class User(SQLAlchemyBaseUserTableUUID, Base):
     pass
-
-
-engine = create_async_engine(
-    # DATABASE_URL
-    SQLALCHEMY_DATABASE_URL
-)
-async_session_maker = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
 
 async def create_db_and_tables():

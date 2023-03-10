@@ -3,10 +3,10 @@ cq:
 	flake8 ./ && black ./ && isort ./ && mypy ./
 
 reload:
-	uvicorn app.main:app --reload
+	uvicorn apps.main:app --reload
 
-alemmig:
-	alembic init migration
+aleminit:
+	alembic init ./migration/
 
 alemrev:
 	alembic revision --autogenerate -m "Initial"

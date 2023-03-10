@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "6b75e54e885e71983993db6f4186772c4dcbeb05465f506c12c36db1653013cc"
+            "sha256": "4a66d89b73ff9c3989fe454e03883a476d626a4f7b25804e81b65e40e10b686f"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -330,31 +330,20 @@
                 "all"
             ],
             "hashes": [
-                "sha256:023a0f5bd2c8b2609014d3bba1e14a1d7df96c6abea0a73070621c9862b9a4de",
-                "sha256:ae7b97c778e2f2ec3fb3cb4fb14162129411d99907fb71920f6d69a524340ebf"
+                "sha256:c2944febec6da706f4c82cdfa0de48afda960c8fbde29dec88697d55a67d7718",
+                "sha256:d6e6db5f096d67b475e2a09e1124983554f634fad50297de85fc3de0583df13a"
             ],
             "index": "pypi",
             "markers": null,
-            "version": "==0.92.0"
+            "version": "==0.93.0"
         },
         "fastapi-users": {
-            "extras": [
-                "sqlalchemy"
-            ],
             "hashes": [
                 "sha256:7f77a2a74be8833daaba5d60f8e8c5b445bc26f26aecc445eea9d80e877d5629",
                 "sha256:c8edc0c16b3bca41c4b4cea479b85b8f37f6682414e8649e01a05c0b135dbe7d"
             ],
             "index": "pypi",
-            "markers": null,
             "version": "==10.4.0"
-        },
-        "fastapi-users-db-sqlalchemy": {
-            "hashes": [
-                "sha256:83c955cdd3a3c8c95077c087cecdb51d067906ad397e2f3febf02784bcb5d13b",
-                "sha256:c626a82af6c421cab791055355944bab2779a26b3a25a4dba11d459aaa17f66a"
-            ],
-            "version": "==4.0.5"
         },
         "greenlet": {
             "hashes": [

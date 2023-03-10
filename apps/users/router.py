@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 
-from .db import User, create_db_and_tables
+from .models import User, create_db_and_tables
 from .schemas import UserCreate, UserRead
 from .users import auth_backend, current_active_user, fastapi_users
 
