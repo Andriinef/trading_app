@@ -1,4 +1,4 @@
-from apps.db.db import SessionLocal, get_db
+from apps.db.db import SessionLocal
 from fastapi import APIRouter, Body, Depends
 from fastapi.responses import FileResponse, JSONResponse
 from sqlalchemy.orm import Session
@@ -7,6 +7,14 @@ from .models import Person
 from .shemas import PersonCreateSchema, PersonResponseSchema
 
 person_router = APIRouter(prefix="/person", tags=["person"])
+
+# определяем зависимость
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 
 @person_router.get("/api/users", response_model=PersonResponseSchema)

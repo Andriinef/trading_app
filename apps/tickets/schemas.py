@@ -1,23 +1,38 @@
+from typing import List, Optional
+
 from pydantic import BaseModel
 
 
-class TicketCreateSchema(BaseModel):
-    customer_id: int
-    manager_id: int
-    header: str
-    body: str
+class TicketBase(BaseModel):
+    title: str
+    description: Optional[str] = None
 
 
-class TicketSchema(TicketCreateSchema):
+class TicketCreate(TicketBase):
+    pass
+
+
+class Ticket(TicketBase):
     id: int
+    status: str
+    owner_id: int
+
+    class Config:
+        orm_mode = True
 
 
-class TicketResponseSchema(BaseModel):
+class UserBase(BaseModel):
+    username: str
+    email: str
+
+
+class UserCreate(UserBase):
+    password: str
+
+
+class User(UserBase):
     id: int
-    customer_id: int
-    manager_id: int
-    header: str
-    body: str
+    tickets: List[Ticket] = []
 
     class Config:
         orm_mode = True

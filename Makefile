@@ -5,6 +5,9 @@ cq:
 reload:
 	uvicorn apps.main:app --reload
 
+uvicorn:
+	uvicorn apps.main:app --host 0.0.0.0 --port 8000 --reload
+
 aleminit:
 	alembic init ./migration/
 
