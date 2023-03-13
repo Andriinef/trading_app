@@ -6,8 +6,10 @@ from sqlalchemy.orm import Session
 
 from .models import Ticket as DBTicket
 from .models import User as DBUser
-from .schemas import Ticket as TicketSchema, TicketCreate, UserBase, UserCreate
+from .schemas import Ticket as TicketSchema
+from .schemas import TicketCreate
 from .schemas import User as UserSchema
+from .schemas import UserBase, UserCreate
 
 tickets_router = APIRouter(prefix="/tickets", tags=["Tickets"])
 

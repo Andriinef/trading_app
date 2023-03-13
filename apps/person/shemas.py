@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class PersonCreateSchema(BaseModel):
@@ -6,10 +6,15 @@ class PersonCreateSchema(BaseModel):
     age: int
 
 
-class PersonResponseSchema(BaseModel):
+class PersonSchema(PersonCreateSchema):
     id: int
-    name: str
-    age: int
 
     class Config:
         orm_mode = True
+
+
+class PersonResponseSchema(BaseModel):
+    results: list[PersonSchema] = Field(
+        description="Includes the list of Ticket response schema",
+        default_factory=list,
+    )
