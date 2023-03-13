@@ -7,6 +7,7 @@ from .currency.router import currency_router
 from .fake_user_trades.router import trades_router
 from .person.routers import person_router
 from .tickets.api import tickets_router
+from .users.api import users_router
 
 app = FastAPI()
 
@@ -15,6 +16,7 @@ app.include_router(trades_router)
 app.include_router(currency_router)
 app.include_router(tickets_router)
 app.include_router(person_router)
+app.include_router(users_router)
 
 
 @app.exception_handler(RequestValidationError)

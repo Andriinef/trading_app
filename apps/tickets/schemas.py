@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Optional
 
 from pydantic import BaseModel
 
@@ -12,27 +12,10 @@ class TicketCreate(TicketBase):
     pass
 
 
-class Ticket(TicketBase):
+class TicketResponseSchema(TicketBase):
     id: int
     status: str
     owner_id: int
-
-    class Config:
-        orm_mode = True
-
-
-class UserBase(BaseModel):
-    username: str
-    email: str
-
-
-class UserCreate(UserBase):
-    password: str
-
-
-class User(UserBase):
-    id: int
-    tickets: List[Ticket] = []
 
     class Config:
         orm_mode = True

@@ -15,6 +15,6 @@ class PersonSchema(PersonCreateSchema):
 
 class PersonResponseSchema(BaseModel):
     results: list[PersonSchema] = Field(
-        description="Includes the list of Ticket response schema",
+        description="Includes the list of Person response schema",
         default_factory=list,
     )

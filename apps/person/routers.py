@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from .models import Person
 from .shemas import PersonCreateSchema, PersonResponseSchema, PersonSchema
 
-person_router = APIRouter(prefix="/person", tags=["person"])
+person_router = APIRouter(prefix="/person", tags=["person"])  # type: ignore
 
 # определяем зависимость
 def get_db():
@@ -21,7 +21,7 @@ def get_db():
 def get_people(db: Session = Depends(get_db)):
     # получаем пользователей
     person_results = db.query(Person).all()
-    return PersonResponseSchema(results=person_results)
+    return PersonResponseSchema(results=person_results)  # type: ignore
 
 
 @person_router.get("/api/users/{id}", response_model=PersonResponseSchema)
@@ -53,10 +53,10 @@ def edit_person(id: int, data: PersonCreateSchema = Body(...), db: Session = Dep
     if person == None:
         return JSONResponse(status_code=404, content={"message": "Пользователь не найден"})
     # если пользователь найден, изменяем его данные и отправляем обратно клиенту
-    person.age = data.age
-    person.name = data.name
+    person.age = data.age  # type: ignore
+    person.name = data.name  # type: ignore
     db.commit()  # сохраняем изменения
-    db.refresh(person)
+    db.refresh(person)  # обновляем объект в базе данных.
     return person
 
 
