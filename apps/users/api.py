@@ -39,7 +39,8 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
     user_results = db.query(User).filter(User.id == user_id).first()
     if user_results is None:
         return JSONResponse(status_code=404, content={"message": "Пользователь не найден"})
-    return UserResponseSchema(results=[user_results])
+    user: list[UserSchema] = [UserSchema.from_orm(user_results)]
+    return UserResponseSchema(results=user)
 
 
 @users_router.put("/users/{user_id}", response_model=UserResponseSchema)

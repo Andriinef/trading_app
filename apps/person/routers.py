@@ -35,7 +35,8 @@ def get_person(id, db: Session = Depends(get_db)):
     if person_results == None:
         return JSONResponse(status_code=404, content={"message": "Пользователь не найден"})
     # если пользователь найден, отправляем его
-    return PersonResponseSchema(results=[person_results])
+    person: list[PersonSchema] = [PersonSchema.from_orm(person_results)]
+    return PersonResponseSchema(results=person)
 
 
 @person_router.post("/api/users", response_model=PersonResponseSchema)
