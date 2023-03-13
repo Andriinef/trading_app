@@ -1,4 +1,4 @@
-from apps.db.db import SessionLocal
+from apps.db.get_db import get_db
 from apps.tickets.models import Ticket
 from apps.tickets.schemas import TicketBase, TicketCreate, TicketResponseSchema
 from fastapi import APIRouter, Depends
@@ -6,15 +6,6 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 
 tickets_router = APIRouter(prefix="/tickets", tags=["tickets"])
-
-
-# Dependency
-def get_db():
-    try:
-        db = SessionLocal()
-        yield db
-    finally:
-        db.close()  # type: ignore
 
 
 @tickets_router.post("/tickets/")

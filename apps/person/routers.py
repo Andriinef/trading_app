@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from .models import Person
 from .shemas import PersonCreateSchema, PersonResponseSchema, PersonSchema
 
-person_router = APIRouter(prefix="/person", tags=["person"])  # type: ignore
+person_router = APIRouter(prefix="/person", tags=["person"])
 
 # определяем зависимость
 def get_db():
@@ -21,7 +21,10 @@ def get_db():
 def get_people(db: Session = Depends(get_db)):
     # получаем пользователей
     person_results = db.query(Person).all()
-    return PersonResponseSchema(results=person_results)  # type: ignore
+    if person_results is None:
+        return JSONResponse(status_code=404, content={"message": "Пользователь не найден"})
+    person: list[PersonSchema] = [PersonSchema.from_orm(person) for person in person_results]
+    return PersonResponseSchema(results=person)
 
 
 @person_router.get("/api/users/{id}", response_model=PersonResponseSchema)
