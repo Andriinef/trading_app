@@ -1,21 +1,27 @@
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
-class TicketBase(BaseModel):
+class TicketCreateShema(BaseModel):
     title: str
     description: Optional[str] = None
+    status: str = "publ"
 
 
-class TicketCreate(TicketBase):
-    pass
+class TicketPostShema(TicketCreateShema):
+    owner_id: int = 2
 
 
-class TicketResponseSchema(TicketBase):
+class TicketShema(TicketPostShema):
     id: int
-    status: str
-    owner_id: int
 
     class Config:
         orm_mode = True
+
+
+class TicketResponseSchema(BaseModel):
+    results: list[TicketShema] = Field(
+        description="Includes the list of Ticket response schema",
+        default_factory=list,
+    )
