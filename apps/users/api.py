@@ -48,8 +48,11 @@ def update_user(user_id: int, user: UserCreateSchema, db: Session = Depends(get_
     db_user = db.query(User).filter(User.id == user_id).first()
     if db_user is None:
         return JSONResponse(status_code=404, content={"message": "Пользователь не найден"})
-    db_user.username = user.username  # type: ignore
-    db_user.email = user.email  # type: ignore
+    # db_user.username = user.username
+    # db_user.email = user.email
+    update_user = user.dict(exclude_unset=True)
+    for key, value in update_user.items():
+        setattr(db_user, key, value)
     db.commit()
     db.refresh(db_user)
     return UserResponseSchema(results=[db_user])

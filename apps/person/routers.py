@@ -49,17 +49,20 @@ def create_person(person: PersonCreateSchema = Body(...), db: Session = Depends(
 
 
 @person_router.put("/api/users", response_model=PersonSchema)
-def edit_person(id: int, data: PersonCreateSchema = Body(...), db: Session = Depends(get_db)):
-
+def edit_person(id: int, date: PersonCreateSchema = Body(...), db: Session = Depends(get_db)):
+    up_date = date.dict(exclude_unset=True)
     # получаем пользователя по id
     person = db.query(Person).filter(Person.id == id).first()
     # если не найден, отправляем статусный код и сообщение об ошибке
     if person == None:
         return JSONResponse(status_code=404, content={"message": "Пользователь не найден"})
     # если пользователь найден, изменяем его данные и отправляем обратно клиенту
-    person.age = data.age  # type: ignore
-    person.name = data.name  # type: ignore
-    db.commit()  # сохраняем изменения
+    # person.age = data.age
+    # person.name = data.name
+    update_percon = date.dict(exclude_unset=True)
+    for key, value in update_percon.items():
+        setattr(person, key, value)
+    db.commit()  # комитим изменения
     db.refresh(person)  # обновляем объект в базе данных.
     return person
 

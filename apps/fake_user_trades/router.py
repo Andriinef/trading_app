@@ -84,7 +84,14 @@ def update_user_name(user_id: int, new_name: str):
     return {"status": 200, "data": update_user}
 
 
-# @trades_router.post("/tredis")
-# def add_tredis(tredis: list[Trade]):
-#     fake_trades.extend(tredis)
+@trades_router.get("/trades")
+def get_tradis(limit: int = 10, offset: int = 0):
+    return fake_trades[offset:][:limit]
+
+
+# @trades_router.post("/trades")
+# def add_trades(trades: list[Trade]):
+#     global fake_trades  # Используйте глобальный оператор для обозначения fake_trades, определенного вне функции
+#     # fake_trades.extend(trades)
+#     fake_trades += trades  # Используйте '+=' вместо extend «развернуть», чтобы облегчить операцию
 #     return {"status": 200, "data": fake_trades}
