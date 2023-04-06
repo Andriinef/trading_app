@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from .models import Person
 from .shemas import PersonCreateSchema, PersonResponseSchema, PersonSchema
 
-person_router = APIRouter(prefix="/person", tags=["person"])
+app = APIRouter(prefix="/person", tags=["person"])
 
 # определяем зависимость
 def get_db():
@@ -17,7 +17,7 @@ def get_db():
         db.close()
 
 
-@person_router.get("/api/users", response_model=PersonResponseSchema)
+@app.get("/api/users", response_model=PersonResponseSchema)
 def get_people(db: Session = Depends(get_db)):
     # получаем пользователей
     person_results = db.query(Person).all()
@@ -27,7 +27,7 @@ def get_people(db: Session = Depends(get_db)):
     return PersonResponseSchema(results=person)
 
 
-@person_router.get("/api/users/{id}", response_model=PersonResponseSchema)
+@app.get("/api/users/{id}", response_model=PersonResponseSchema)
 def get_person(id, db: Session = Depends(get_db)):
     # получаем пользователя по id
     person_results = db.query(Person).filter(Person.id == id).first()
@@ -39,7 +39,7 @@ def get_person(id, db: Session = Depends(get_db)):
     return PersonResponseSchema(results=person)
 
 
-@person_router.post("/api/users", response_model=PersonResponseSchema)
+@app.post("/api/users", response_model=PersonResponseSchema)
 def create_person(person: PersonCreateSchema = Body(...), db: Session = Depends(get_db)):
     person_results = Person(name=person.name, age=person.age)
     db.add(person_results)
@@ -48,7 +48,7 @@ def create_person(person: PersonCreateSchema = Body(...), db: Session = Depends(
     return PersonResponseSchema(results=[person_results])
 
 
-@person_router.put("/api/users", response_model=PersonSchema)
+@app.put("/api/users", response_model=PersonSchema)
 def edit_person(id: int, date: PersonCreateSchema = Body(...), db: Session = Depends(get_db)):
     up_date = date.dict(exclude_unset=True)
     # получаем пользователя по id
@@ -67,7 +67,7 @@ def edit_person(id: int, date: PersonCreateSchema = Body(...), db: Session = Dep
     return person
 
 
-@person_router.delete("/api/users/{id}")
+@app.delete("/api/users/{id}")
 def delete_person(id, db: Session = Depends(get_db)):
     # получаем пользователя по id
     person = db.query(Person).filter(Person.id == id).first()

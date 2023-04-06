@@ -42,5 +42,5 @@ show_error_codes = true
 namespace_packages = true
 
 [[tool.mypy.overrides]]
-module = ["requests"]
+module = ["requests", "redis"]
 ignore_missing_imports = true

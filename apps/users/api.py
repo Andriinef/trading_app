@@ -11,10 +11,10 @@ from fastapi import APIRouter, Body, Depends
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 
-users_router = APIRouter(prefix="/users", tags=["users"])
+app = APIRouter(prefix="/users", tags=["users"])
 
 
-@users_router.post("/users/", response_model=UserResponseSchema)
+@app.post("/users/", response_model=UserResponseSchema)
 def create_user(user: UserPostSchema = Body(...), db: Session = Depends(get_db)):
     # Хешируем пароль пользователя
     hashed_password = bcrypt.hashpw(user.password.encode("utf-8"), bcrypt.gensalt())
@@ -25,7 +25,7 @@ def create_user(user: UserPostSchema = Body(...), db: Session = Depends(get_db))
     return UserResponseSchema(results=[db_user])
 
 
-@users_router.get("/users/", response_model=UserResponseSchema)
+@app.get("/users/", response_model=UserResponseSchema)
 def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     user_results = db.query(User).offset(skip).limit(limit).all()
     if user_results is None:
@@ -34,7 +34,7 @@ def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return UserResponseSchema(results=user)
 
 
-@users_router.get("/users/{user_id}", response_model=UserResponseSchema)
+@app.get("/users/{user_id}", response_model=UserResponseSchema)
 def read_user(user_id: int, db: Session = Depends(get_db)):
     user_results = db.query(User).filter(User.id == user_id).first()
     if user_results is None:
@@ -43,7 +43,7 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
     return UserResponseSchema(results=user)
 
 
-@users_router.put("/users/{user_id}", response_model=UserResponseSchema)
+@app.put("/users/{user_id}", response_model=UserResponseSchema)
 def update_user(user_id: int, user: UserCreateSchema, db: Session = Depends(get_db)):
     db_user = db.query(User).filter(User.id == user_id).first()
     if db_user is None:
@@ -58,7 +58,7 @@ def update_user(user_id: int, user: UserCreateSchema, db: Session = Depends(get_
     return UserResponseSchema(results=[db_user])
 
 
-@users_router.delete("/users/{user_id}")
+@app.delete("/users/{user_id}")
 def delete_user(user_id: int, db: Session = Depends(get_db)):
     db_user = db.query(User).filter(User.id == user_id).first()
     if db_user is None:

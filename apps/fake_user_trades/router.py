@@ -52,10 +52,10 @@ class Trade(BaseModel):
     amount: float
 
 
-trades_router = APIRouter(prefix="/trades", tags=["trades"])
+app = APIRouter(prefix="/trades", tags=["trades"])
 
 
-@trades_router.get("/user/{user_id}", response_model=list[User])
+@app.get("/user/{user_id}", response_model=list[User])
 def get_user(user_id: int):
     for user in fake_user:
         if user.get("id") == user_id:
@@ -64,7 +64,7 @@ def get_user(user_id: int):
             return user_list
 
 
-@trades_router.post("/user_lambda/{user_id}")
+@app.post("/user_lambda/{user_id}")
 def update_user_name_lambda(user_id: int, new_name: str):
     update_user = list(filter(lambda user: user["id"] == user_id, fake_user))
     if not update_user:
@@ -74,7 +74,7 @@ def update_user_name_lambda(user_id: int, new_name: str):
     return {"status": 200, "data": update_user[0]}
 
 
-@trades_router.post("/user/{user_id}")
+@app.post("/user/{user_id}")
 def update_user_name(user_id: int, new_name: str):
     update_user = next((user for user in fake_user if user["id"] == user_id), None)
     if update_user is None:
@@ -84,12 +84,12 @@ def update_user_name(user_id: int, new_name: str):
     return {"status": 200, "data": update_user}
 
 
-@trades_router.get("/trades")
+@app.get("/trades")
 def get_tradis(limit: int = 10, offset: int = 0):
     return fake_trades[offset:][:limit]
 
 
-# @trades_router.post("/trades")
+# @app.post("/trades")
 # def add_trades(trades: list[Trade]):
 #     global fake_trades  # Используйте глобальный оператор для обозначения fake_trades, определенного вне функции
 #     # fake_trades.extend(trades)
